@@ -1,13 +1,11 @@
-# Stage 1: install dependencies
-FROM apache/airflow:2.9.1-python3.11 AS builder
+FROM apache/airflow:2.9.1
+
+USER root
+
+RUN pip install --no-cache-dir \
+    pandas \
+    requests \
+    google-cloud-storage \
+    google-cloud-secret-manager
 
 USER airflow
-COPY requirements.txt /requirements.txt
-RUN pip install --no-cache-dir --user -r /requirements.txt
-
-# Stage 2: final lean image
-FROM apache/airflow:2.9.1-python3.11
-
-USER airflow
-COPY --from=builder /home/airflow/.local /home/airflow/.local
-ENV PATH=/home/airflow/.local/bin:$PATH

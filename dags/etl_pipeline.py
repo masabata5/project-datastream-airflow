@@ -2,8 +2,25 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 
-def test_task():
-    print("ETL Pipeline Running")
+import requests
+import pandas as pd
+
+def etl_task():
+    # Extract
+    url = "https://jsonplaceholder.typicode.com/users"
+    response = requests.get(url)
+
+    data = response.json()
+
+    # Transform
+    df = pd.DataFrame(data)
+
+    df = df.drop_duplicates()
+
+    # Load
+    df.to_csv("/tmp/users.csv", index=False)
+
+    print("ETL completed successfully")
 
 with DAG(
     dag_id="etl_pipeline",
@@ -14,5 +31,5 @@ with DAG(
 
     run_etl = PythonOperator(
         task_id="run_etl",
-        python_callable=test_task
+        python_callable=etl_task
     )

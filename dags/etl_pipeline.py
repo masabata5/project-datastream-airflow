@@ -50,21 +50,35 @@ def transform_data():
 # Load
 def load_data():
 
+    print("Starting data load")
+
     try:
 
-        client = storage.Client()
+        client = storage.Client(
+            project="project-repo-498812"
+        )
 
-        bucket = client.bucket("project-repo-498812-terraform-state")
+        bucket = client.bucket(
+            "project-repo-498812-rawdata"
+        )
 
-        blob = bucket.blob("users/users.csv")
+        blob = bucket.blob(
+            "users/users.csv"
+        )
 
-        blob.upload_from_filename("/tmp/clean_users.csv")
+        blob.upload_from_filename(
+            "/tmp/clean_users.csv"
+        )
 
-        print("File uploaded successfully")
+        print(
+            "File uploaded successfully to GCS"
+        )
 
     except Exception as e:
 
-        print(f"Upload failed: {e}")
+        print(
+            f"Upload failed: {e}"
+        )
 
         raise
 

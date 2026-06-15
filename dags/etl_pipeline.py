@@ -5,22 +5,57 @@ from datetime import datetime
 import requests
 import pandas as pd
 
-def etl_task():
-    # Extract
+
+# Extract
+def extract_data():
+    print("Starting data extraction")
+
     url = "https://jsonplaceholder.typicode.com/users"
+
     response = requests.get(url)
+    response.raise_for_status()
 
     data = response.json()
 
-    # Transform
     df = pd.DataFrame(data)
+
+    df.to_csv("/tmp/raw_users.csv", index=False)
+
+    print("Data extraction completed")
+
+
+# Transform
+def transform_data():
+    print("Starting data transformation")
+
+    df = pd.read_csv("/tmp/raw_users.csv")
 
     df = df.drop_duplicates()
 
-    # Load
+    df = df[["id", "name", "email", "phone"]]
+
+    df.columns = [
+        "user_id",
+        "full_name",
+        "email",
+        "phone"
+    ]
+
+    df.to_csv("/tmp/clean_users.csv", index=False)
+
+    print("Data transformation completed")
+
+
+# Load
+def load_data():
+    print("Starting data load")
+
+    df = pd.read_csv("/tmp/clean_users.csv")
+
     df.to_csv("/tmp/users.csv", index=False)
 
-    print("ETL completed successfully")
+    print("Data load completed")
+
 
 with DAG(
     dag_id="etl_pipeline",
@@ -29,7 +64,19 @@ with DAG(
     catchup=False
 ) as dag:
 
-    run_etl = PythonOperator(
-        task_id="run_etl",
-        python_callable=etl_task
+    extract = PythonOperator(
+        task_id="extract_data",
+        python_callable=extract_data
     )
+
+    transform = PythonOperator(
+        task_id="transform_data",
+        python_callable=transform_data
+    )
+
+    load = PythonOperator(
+        task_id="load_data",
+        python_callable=load_data
+    )
+
+    extract >> transform >> load

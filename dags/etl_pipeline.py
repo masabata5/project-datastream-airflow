@@ -5,6 +5,7 @@ from datetime import datetime
 import requests
 import pandas as pd
 
+from google.cloud import storage
 
 # Extract
 def extract_data():
@@ -48,14 +49,24 @@ def transform_data():
 
 # Load
 def load_data():
-    print("Starting data load")
 
-    df = pd.read_csv("/tmp/clean_users.csv")
+    try:
 
-    df.to_csv("/tmp/users.csv", index=False)
+        client = storage.Client()
 
-    print("Data load completed")
+        bucket = client.bucket("project-repo-498812-terraform-state")
 
+        blob = bucket.blob("users/users.csv")
+
+        blob.upload_from_filename("/tmp/clean_users.csv")
+
+        print("File uploaded successfully")
+
+    except Exception as e:
+
+        print(f"Upload failed: {e}")
+
+        raise
 
 with DAG(
     dag_id="etl_pipeline",

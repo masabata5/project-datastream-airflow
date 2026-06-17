@@ -27,14 +27,12 @@ def transform_data():
 
     df = df.drop_duplicates()
 
-    df = df[["id", "name", "email", "phone"]]
-
-    df.columns = [
-        "user_id",
-        "full_name",
-        "email",
-        "phone"
-    ]
+    df = df[[
+        "company_id", "industry", "country", "year",
+        "ai_adoption_level", "ai_investment_usd", "automation_rate",
+        "cost_savings", "revenue_impact", "productivity_gain",
+        "employee_ai_training_hours", "ai_maturity_score", "deployment_count"
+    ]]
 
     df.to_csv("/tmp/clean_users.csv", index=False)
 

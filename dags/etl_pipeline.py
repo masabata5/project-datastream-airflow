@@ -8,17 +8,11 @@ import pandas as pd
 from google.cloud import storage
 
 # Extract
+# Extract
 def extract_data():
     print("Starting data extraction")
 
-    url = "https://jsonplaceholder.typicode.com/users"
-
-    response = requests.get(url)
-    response.raise_for_status()
-
-    data = response.json()
-
-    df = pd.DataFrame(data)
+    df = pd.read_csv('/opt/airflow/data/corporate_ai_adoption_dataset.csv')
 
     df.to_csv("/tmp/raw_users.csv", index=False)
 

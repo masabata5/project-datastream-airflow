@@ -32,7 +32,7 @@ def run_gcs_to_bigquery_etl():
     # 2. Write straight to BigQuery via Pandas GBQ (Bypasses regular API job creation limits)
     print("Writing dataframe straight into BigQuery dataset table...")
     df.to_gbq(
-        destination_table="raw_data_dataset.ai_student_impact_table",
+        destination_table="raw_data_dataset.target_table",
         project_id="project-repo-498812",
         if_exists="replace",
         progress_bar=False
